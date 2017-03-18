@@ -12,18 +12,27 @@ module.exports = class Router extends Hook {
   }
 
   configure() {
-    if (!this.proton.app.routers)
-      this.proton.app.routers = {}
-    return true
+    return new Promise((resolve, reject) => {
+      if (!this.proton.app.routers)
+        this.proton.app.routers = {}
+      resolve()
+    })
   }
 
   initialize() {
-    this._bindToApp()
-    this._bindToProton()
+    return new Promise((resolve, reject) => {
+      try {
+        this._bindToApp()
+        this._bindToProton()
+        resolve()
+      } catch(err) {
+        reject()
+      }
+    })
   }
 
   _bindToApp() {
-    let routersPath = path.join(this.proton.app.path, '/routes')
+    let routersPath = path.join(this.proton.app.path, '/api/routes')
     this.proton.app.routers = require('require-all')(routersPath)
   }
 
